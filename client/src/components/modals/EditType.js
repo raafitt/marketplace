@@ -4,14 +4,22 @@ import { Form, FormControl } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { Context } from '../../index';
-import { createType } from '../../http/deviceApi';
+import { createType, removeTypes } from '../../http/deviceApi';
+import CheckboxList from '../CheckboxList';
 
-const CreateType = observer(({show, onHide}) => {
+
+const EditType = observer(({show, onHide}) => {
   const {device}=useContext(Context)
   const[type, setType]=useState('')
   const addType=()=>{
     createType({name:type}).then(types=>
       console.log(types))
+  }
+
+  const removeType=()=>{
+    removeTypes(JSON.stringify(device.idsToDestroy)).then(
+      console.log('Delete selected types')
+    )
   }
     return (
         <Modal
@@ -34,8 +42,22 @@ const CreateType = observer(({show, onHide}) => {
       </Modal.Body>
       <Modal.Footer>
         <Button variant='outline-danger' onClick={onHide}>Закрыть</Button>
-        <Button variant='outline-success' onClick={addType}>Добавить</Button>
+        <Button variant='outline-success' onClick={()=>{addType();onHide()}}>Добавить</Button>
       </Modal.Footer>
+      <Modal.Header>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Выберите тип для удаления
+        </Modal.Title>
+      </Modal.Header>
+        <CheckboxList items={device.types} />
+        <Modal.Footer>
+        <Button variant='outline-danger' onClick={onHide}>Закрыть</Button>
+        <Button variant='outline-success' onClick={()=>{removeType(); onHide()}}>Удалить</Button>
+      </Modal.Footer>
+      
+      
+      
+    
     </Modal>
   );
 }
@@ -43,4 +65,4 @@ const CreateType = observer(({show, onHide}) => {
     );
 
 
-export default CreateType;
+export default EditType;
